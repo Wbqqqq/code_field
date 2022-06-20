@@ -1,9 +1,10 @@
 import 'dart:math';
+
 import 'package:code_text_field/src/code_modifier.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:highlight/highlight_core.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 
 const _MIDDLE_DOT = '·';
 
@@ -64,7 +65,8 @@ class CodeController extends TextEditingController {
     this.onChange,
   }) : super(text: text) {
     // PatternMap
-    if (language != null && theme == null) throw Exception("A theme must be provided for language parsing");
+    if (language != null && theme == null)
+      throw Exception("A theme must be provided for language parsing");
     // Register language
     if (language != null) {
       highlight.registerLanguage(languageId, language!);
@@ -178,8 +180,9 @@ class CodeController extends TextEditingController {
       }
     }
     // Now fix the textfield for web
-    if (_webSpaceFix) newValue = newValue.copyWith(text: _spacesToMiddleDots(newValue.text));
-    if (onChange != null) onChange!(_webSpaceFix ? _middleDotsToSpaces(newValue.text) : newValue.text);
+    if (_webSpaceFix) newValue = newValue.copyWith(text: _middleDotsToSpaces(newValue.text));
+    if (onChange != null)
+      onChange!(_webSpaceFix ? _middleDotsToSpaces(newValue.text) : newValue.text);
     super.value = newValue;
   }
 
@@ -190,7 +193,9 @@ class CodeController extends TextEditingController {
       onMatch: (Match m) {
         if (styleList.isEmpty) return '';
         int idx;
-        for (idx = 1; idx < m.groupCount && idx <= styleList.length && m.group(idx) == null; idx++) {}
+        for (idx = 1;
+            idx < m.groupCount && idx <= styleList.length && m.group(idx) == null;
+            idx++) {}
         children.add(TextSpan(
           text: m[0],
           style: styleList[idx - 1],
