@@ -1,9 +1,10 @@
 import 'dart:math';
+
 import 'package:code_text_field/src/code_modifier.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:highlight/highlight_core.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 
 const _MIDDLE_DOT = '·';
 
@@ -148,8 +149,7 @@ class CodeController extends TextEditingController {
     const _chars = 'abcdefghijklmnopqrstuvwxyz1234567890';
     final _rnd = Random();
     return String.fromCharCodes(
-      Iterable.generate(
-          10, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))),
+      Iterable.generate(10, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))),
     );
   }
 
@@ -175,11 +175,9 @@ class CodeController extends TextEditingController {
       }
     }
     // Now fix the textfield for web
-    if (_webSpaceFix)
-      newValue = newValue.copyWith(text: _spacesToMiddleDots(newValue.text));
+    if (_webSpaceFix) newValue = newValue.copyWith(text: _middleDotsToSpaces(newValue.text));
     if (onChange != null)
-      onChange!(
-          _webSpaceFix ? _middleDotsToSpaces(newValue.text) : newValue.text);
+      onChange!(_webSpaceFix ? _middleDotsToSpaces(newValue.text) : newValue.text);
     super.value = newValue;
   }
 
@@ -191,9 +189,7 @@ class CodeController extends TextEditingController {
         if (styleList.isEmpty) return '';
         int idx;
         for (idx = 1;
-            idx < m.groupCount &&
-                idx <= styleList.length &&
-                m.group(idx) == null;
+            idx < m.groupCount && idx <= styleList.length && m.group(idx) == null;
             idx++) {}
         children.add(TextSpan(
           text: m[0],
@@ -225,8 +221,7 @@ class CodeController extends TextEditingController {
       if (val != null) {
         if (_webSpaceFix) val = _spacesToMiddleDots(val);
         var child = TextSpan(text: val, style: theme?[node.className]);
-        if (styleRegExp != null)
-          child = _processPatterns(val, theme?[node.className]);
+        if (styleRegExp != null) child = _processPatterns(val, theme?[node.className]);
         currentSpans.add(child);
       } else if (nodeChildren != null) {
         List<TextSpan> tmp = [];
@@ -250,8 +245,7 @@ class CodeController extends TextEditingController {
   }
 
   @override
-  TextSpan buildTextSpan(
-      {required BuildContext context, TextStyle? style, bool? withComposing}) {
+  TextSpan buildTextSpan({required BuildContext context, TextStyle? style, bool? withComposing}) {
     // Retrieve pattern regexp
     final patternList = <String>[];
     if (_webSpaceFix) {
